@@ -76,6 +76,21 @@ class OpportunityRecord(BaseModel):
     person"; a source that only has the weaker department-level contact
     (Harbor, eVA) has no reason to populate these and leaves them `None`
     rather than duplicating `agency` into `contact_name`.
+
+    `general_url` is a separate concept from `url`, added once a real
+    source (Anne Arundel County's Harbor fetcher) was found to have been
+    populating `url` with the SAME generic listing-page link on every
+    record -- not a genuine per-record deep link the way eVA/Baltimore
+    County/AACPS's `url` values are. `url` means "this exact link shows
+    THIS record" and must stay `None` when no such link exists (already
+    DC OCP's precedent, for the same underlying reason: no stable
+    per-solicitation link exists on that portal either). `general_url` is
+    for the honest alternative -- "here's where to browse this SOURCE's
+    listings," identical across every record from that source by
+    construction, meant to be shown ONCE per source (e.g. one line at the
+    top of a digest section), never repeated on every individual record
+    the way a real per-record link would be. A source with a genuine
+    per-record `url` has no reason to also set `general_url`.
     """
 
     model_config = ConfigDict(str_strip_whitespace=True)
@@ -99,6 +114,7 @@ class OpportunityRecord(BaseModel):
     due_date: date | None = None
     estimated_value: Decimal | None = None
     url: str | None = None
+    general_url: str | None = None
     raw_data: dict[str, Any] = Field(default_factory=dict)
     needs_review: bool = False
     review_reason: str | None = None

@@ -54,6 +54,7 @@ def _opportunity_content_params(record: OpportunityRecord) -> dict[str, Any]:
         "due_date": record.due_date,
         "estimated_value": record.estimated_value,
         "url": record.url,
+        "general_url": record.general_url,
         "raw_data": Jsonb(record.raw_data),
         "needs_review": record.needs_review,
         "review_reason": record.review_reason,
@@ -72,7 +73,7 @@ def upsert_opportunity(conn: psycopg.Connection, record: OpportunityRecord) -> d
             client_id, source_slug, external_id, opportunity_type, title,
             description, status, agency, address, county, state, jurisdiction,
             contact_name, contact_email, contact_phone,
-            posted_date, due_date, estimated_value, url, raw_data,
+            posted_date, due_date, estimated_value, url, general_url, raw_data,
             needs_review, review_reason
         ) values (
             %(client_id)s, %(source_slug)s, %(external_id)s, %(opportunity_type)s,
@@ -80,7 +81,7 @@ def upsert_opportunity(conn: psycopg.Connection, record: OpportunityRecord) -> d
             %(county)s, %(state)s, %(jurisdiction)s,
             %(contact_name)s, %(contact_email)s, %(contact_phone)s,
             %(posted_date)s, %(due_date)s,
-            %(estimated_value)s, %(url)s, %(raw_data)s,
+            %(estimated_value)s, %(url)s, %(general_url)s, %(raw_data)s,
             %(needs_review)s, %(review_reason)s
         )
         on conflict (client_id, source_slug, external_id) do update set
@@ -100,6 +101,7 @@ def upsert_opportunity(conn: psycopg.Connection, record: OpportunityRecord) -> d
             due_date = excluded.due_date,
             estimated_value = excluded.estimated_value,
             url = excluded.url,
+            general_url = excluded.general_url,
             raw_data = excluded.raw_data,
             needs_review = excluded.needs_review,
             review_reason = excluded.review_reason,
